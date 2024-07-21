@@ -41,14 +41,15 @@ def do_deploy(archive_path):
         sudo("rm /tmp/{}".format(archive_filename))
 
         # Move the contents to the proper directory
-        sudo(f"rm -rf /data/web_static/releases/{archive_name}/web_static")
+        sudo("mv /data/web_static/releases/{}/web_static/* /data/web_static/releases/{}/".format(
+            archive_name, archive_name))
+        sudo("rm -rf /data/web_static/releases/{}/web_static".format(archive_name))
 
         # Delete the existing symbolic link
         sudo("rm -rf /data/web_static/current")
 
         # Create a new symbolic link to the new version
-        path = "/data/web_static/releases/"
-        sudo(f"ln -s {path}{archive_name}/ /data/web_static/current")
+        sudo("ln -s /data/web_static/releases/{}/ /data/web_static/current".format(archive_name))
 
         return True
     except Exception as e:

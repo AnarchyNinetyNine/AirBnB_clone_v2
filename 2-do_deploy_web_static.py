@@ -2,13 +2,12 @@
 
 """ Module for Deploying Archive """
 
-
 from fabric.api import env, put, run, sudo
 import os
 
-
 # Define the IPs of the web servers
 env.hosts = ['web-01.bloodlink.tech', 'web-02.bloodlink.tech']
+
 
 def do_deploy(archive_path):
     """
@@ -35,21 +34,23 @@ def do_deploy(archive_path):
         sudo("mkdir -p /data/web_static/releases/{}/".format(archive_name))
 
         # Uncompress the archive to the target directory
-        sudo("tar -xzf /tmp/{} -C /data/web_static/releases/{}/".format(archive_filename, archive_name))
+        sudo("tar -xzf /tmp/{} -C /data/web_static/releases/{}/".format(
+            archive_filename, archive_name))
 
         # Delete the archive from the web server
         sudo("rm /tmp/{}".format(archive_filename))
 
         # Move the contents to the proper directory
-        sudo("mv /data/web_static/releases/{}/web_static/* /data/web_static/releases/{}/".format(archive_name, archive_name))
-        sudo("rm -rf /data/web_static/releases/{}/web_static".format(archive_name))
+        sudo(f"rm -rf /data/web_static/releases/{archive_name}/web_static")
 
         # Delete the existing symbolic link
         sudo("rm -rf /data/web_static/current")
 
         # Create a new symbolic link to the new version
-        sudo("ln -s /data/web_static/releases/{}/ /data/web_static/current".format(archive_name))
+        path = "/data/web_static/releases/"
+        sudo(f"ln -s {path}{archive_name}/ /data/web_static/current")
 
         return True
     except Exception as e:
+        print(f"An error occurred: {e}")
         return False

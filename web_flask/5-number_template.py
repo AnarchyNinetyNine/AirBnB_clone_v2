@@ -88,7 +88,7 @@ def display_number_template(n):
         Args:
             n: The integer to display in the HTML page.
     """
-    return render_template('number.html', number=n)
+    return render_template('5-number.html', n=n)
 
 
 if __name__ == '__main__':
